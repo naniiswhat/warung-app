@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Warung - Urus Vendor</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon" href="icon.png">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Shared Navigation Menu -->
+        <nav class="nav-menu">
+            <a href="index.html">Dashboard Harian</a>
+            <a href="vendors.html" class="active">Urus Vendor</a>
+            <a href="sejarah.html">Sejarah</a>
+        </nav>
+
+        <h2>Urus Vendor & Katalog</h2>
+
+        <!-- Section 1: Add New Vendor -->
+        <div class="results" style="margin-bottom: 24px;">
+            <h3 style="margin-bottom: 12px; color: #1e3a8a;">1. Tambah Vendor Baru</h3>
+            <div class="form-group">
+                <input type="text" id="newVendorName" placeholder="Nama Vendor (Contoh: Makcik Kiah)">
+            </div>
+            <button id="btnAddVendor" class="btn-primary" style="background-color: #10b981;">+ Tambah Vendor</button>
+        </div>
+
+        <!-- Section 2: Add Food to a Vendor -->
+        <div class="results" style="margin-bottom: 32px;">
+            <h3 style="margin-bottom: 12px; color: #1e3a8a;">2. Tambah Makanan</h3>
+            <div class="form-group">
+                <label>Pilih Vendor</label>
+                <select id="selectVendorForFood"></select>
+            </div>
+            <div class="form-group">
+                <label>Nama Makanan</label>
+                <input type="text" id="newFoodName" placeholder="Contoh: Karipap Kentang">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Harga Vendor (RM)</label>
+                    <input type="number" id="newHargaV" value="1.00" step="0.10">
+                </div>
+                <div class="form-group">
+                    <label>Harga Jual (RM)</label>
+                    <input type="number" id="newHargaJ" value="1.50" step="0.10">
+                </div>
+            </div>
+            <button id="btnAddFood" class="btn-primary">+ Tambah Makanan</button>
+        </div>
+
+        <!-- Section 3: The Catalog Viewer -->
+        <div id="katalogContainer"></div>
+    </div>
+
+    <!-- Load Database First, then Vendors Logic -->
+    <script src="database.js"></script>
+    <script src="vendors.js"></script>
+</body>
+
+</html>

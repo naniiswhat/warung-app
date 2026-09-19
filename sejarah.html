@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Warung - Sejarah</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon" href="icon.png">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Shared Navigation Menu -->
+        <nav class="nav-menu">
+            <a href="index.html">Dashboard Harian</a>
+            <a href="vendors.html">Urus Vendor</a>
+            <a href="sejarah.html" class="active">Sejarah</a>
+        </nav>
+
+        <h2>Sejarah Jualan</h2>
+
+        <!-- Date Picker -->
+        <div class="results" style="margin-bottom: 24px;">
+            <div class="form-group" style="margin-bottom: 0;">
+                <label>Pilih Tarikh Rekod</label>
+                <select id="tarikhSejarah"></select>
+            </div>
+        </div>
+
+        <!-- The Viewer -->
+        <div id="sejarahContainer">
+            <p style="text-align:center; color:#64748b; margin-top:20px;">Sila pilih tarikh untuk melihat rekod.</p>
+        </div>
+    </div>
+
+    <!-- Load Database First, then Sejarah Logic -->
+    <script src="database.js"></script>
+    <script src="sejarah.js"></script>
+</body>
+
+</html>

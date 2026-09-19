@@ -1,0 +1,237 @@
+/* Reset and Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    /* A soft gray background for the laptop screen */
+    background-color: #f3f4f6;
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+/* The "Mobile Phone" Container */
+.container {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 400px;
+    /* Forces iPhone width */
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+}
+
+h2 {
+    text-align: center;
+    color: #111827;
+    margin-bottom: 24px;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* Form Layout */
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-row {
+    display: flex;
+    gap: 12px;
+}
+
+.form-row .form-group {
+    flex: 1;
+    /* Splits side-by-side inputs evenly */
+}
+
+label {
+    display: block;
+    font-size: 0.875rem;
+    color: #4b5563;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    font-size: 1rem;
+    color: #111827;
+    background-color: #f9fafb;
+    transition: all 0.2s ease;
+    -webkit-appearance: none;
+    /* Makes dropdowns look like native app buttons */
+    appearance: none;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* Results Card */
+.results {
+    margin-top: 28px;
+    background-color: #eff6ff;
+    /* Light blue tint to highlight totals */
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #bfdbfe;
+}
+
+.results p {
+    font-size: 1rem;
+    color: #334155;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.results p:last-child {
+    margin-bottom: 0;
+    font-size: 1.15rem;
+    color: #1e3a8a;
+    border-top: 1px solid #93c5fd;
+    padding-top: 12px;
+    margin-top: 4px;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 14px;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.btn-danger {
+    width: 100%;
+    padding: 14px;
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.grand-total {
+    background-color: #fef2f2;
+    border-color: #fca5a5;
+    margin-top: 30px;
+}
+
+.grand-total p:last-child {
+    border-top-color: #f87171;
+    color: #991b1b;
+}
+
+.btn-padam {
+    background-color: transparent;
+    color: #ef4444;
+    border: 1px solid #ef4444;
+    padding: 8px;
+    border-radius: 6px;
+    margin-top: 12px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: 600;
+}
+
+/* Vendor Grouping Styles */
+.vendor-group {
+    margin-top: 24px;
+    background-color: #f8fafc;
+    /* Very light gray/blue */
+    border: 2px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.vendor-header {
+    border-bottom: 2px solid #94a3b8;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+}
+
+.vendor-header h3 {
+    color: #334155;
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+    text-align: left;
+}
+
+.vendor-header p {
+    color: #047857;
+    /* High contrast green for the payout */
+    font-weight: 700;
+    font-size: 1.15rem;
+}
+
+/* Adjusting the item cards to fit inside the vendor box */
+.item-card {
+    margin-top: 12px;
+    padding: 16px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Navigation Menu */
+.nav-menu {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 10px;
+}
+
+.nav-menu a {
+    flex: 1;
+    text-align: center;
+    text-decoration: none;
+    color: #64748b;
+    font-weight: 600;
+    padding: 8px 0;
+    border-radius: 8px;
+}
+
+.nav-menu a.active {
+    background-color: #3b82f6;
+    color: white;
+}
+
+/* WhatsApp Button */
+.btn-whatsapp {
+    width: 100%;
+    padding: 12px;
+    background-color: #25D366;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 12px;
+    box-shadow: 0 2px 4px rgba(37, 211, 102, 0.2);
+}
+
+.btn-whatsapp:active {
+    background-color: #1ea952;
+}
