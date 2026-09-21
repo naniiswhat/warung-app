@@ -8,38 +8,95 @@
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <link rel="apple-touch-icon" href="icon.png">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 
 <body>
     <div class="container">
-        <!-- Shared Navigation Menu -->
         <nav class="nav-menu">
             <a href="index.html">Dashboard Harian</a>
             <a href="vendors.html">Urus Vendor</a>
-            <a href="sejarah.html" class="active">Sejarah</a>
+            <a href="sejarah.html" class="active">Sejarah & Laporan</a>
         </nav>
 
-        <h2>Sejarah Jualan</h2>
+        <div class="management-grid">
+            <div class="form-panel">
+                <h2>Carian Laporan</h2>
 
-        <!-- Date Picker -->
-        <div class="results" style="margin-bottom: 24px;">
-            <div class="form-group" style="margin-bottom: 0;">
-                <label>Pilih Tarikh Rekod</label>
-                <select id="tarikhSejarah"></select>
+                <div class="form-group">
+                    <label>Dari Tarikh</label>
+                    <input type="date" id="tarikhMula">
+                </div>
+                <div class="form-group">
+                    <label>Hingga Tarikh</label>
+                    <input type="date" id="tarikhAkhir">
+                </div>
+
+                <button id="btnFilterRange" class="btn-primary" style="margin-top: 12px;">Kira Jumlah Julat</button>
+                <button id="btnSetHariIni" class="btn-primary"
+                    style="margin-top: 8px; background-color: transparent; border: 1.5px solid var(--accent-gold); color: var(--accent-gold);">Kembali
+                    ke Hari Ini</button>
+
+                <hr style="border: 1px solid var(--border-color); margin: 24px 0;">
+
+                <h2 style="font-size: 1.2rem; margin-bottom: 8px;">Tambah Rekod Lama</h2>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">Masukkan jualan yang
+                    terlupa direkodkan.</p>
+
+                <div class="form-group">
+                    <label>Tarikh Rekod</label>
+                    <input type="date" id="manualTarikh">
+                </div>
+                <div class="form-group">
+                    <label>Nama Vendor</label>
+                    <select id="manualVendorName"></select>
+                </div>
+                <div class="form-group">
+                    <label>Nama Makanan</label>
+                    <select id="manualFoodName"></select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Modal (RM)</label>
+                        <input type="number" id="manualHargaV" value="1.00" step="0.10">
+                    </div>
+                    <div class="form-group">
+                        <label>Jual (RM)</label>
+                        <input type="number" id="manualHargaJ" value="1.50" step="0.10">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Hantar</label>
+                        <input type="number" id="manualQtyHantar" value="20">
+                    </div>
+                    <div class="form-group">
+                        <label>Laku</label>
+                        <input type="number" id="manualQtyLaku" value="0">
+                    </div>
+                </div>
+
+                <button id="btnTambahManual" class="btn-primary">+ Tambah ke Sejarah</button>
             </div>
-        </div>
 
-        <!-- The Viewer -->
-        <div id="sejarahContainer">
-            <p style="text-align:center; color:#64748b; margin-top:20px;">Sila pilih tarikh untuk melihat rekod.</p>
+            <div class="feed-panel">
+                <div id="sejarahContainer">
+                    <p style="text-align:center; color: var(--text-muted); margin-top:20px; font-size: 1.1rem;">Sila
+                        pilih tarikh untuk melihat rekod.</p>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Load Database First, then Sejarah Logic -->
     <script src="database.js"></script>
     <script src="sejarah.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); });
+        }
+    </script>
 </body>
 
 </html>

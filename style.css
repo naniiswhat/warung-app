@@ -1,237 +1,355 @@
+/* =========================================
+   ZHONGLI / GEO THEME (Dark Coffee & Gold) 
+   ========================================= */
+
+:root {
+    /* Backgrounds */
+    --bg-page: #1e1915;
+    /* Very dark coffee brown */
+    --bg-panel: #2b241e;
+    /* Slightly lighter charcoal brown */
+    --bg-card: #362d26;
+    /* Warm dark grey-brown for cards */
+    --bg-input: #40362f;
+    /* Input field background */
+
+    /* Accents (Geo Gold/Yellow) */
+    --accent-gold: #d4af37;
+    /* Metallic ginkgo gold */
+    --accent-gold-hover: #e5c158;
+    --accent-gold-muted: rgba(212, 175, 55, 0.15);
+
+    /* Text Colors */
+    --text-main: #f5f0e6;
+    /* Soft parchment white */
+    --text-muted: #b8a99a;
+    /* Muted sand/beige */
+    --text-dark: #1e1915;
+    /* Dark brown for buttons/contrast */
+
+    /* UI Elements */
+    --border-color: #4a3f35;
+    --danger: #ef4444;
+    /* Keep red for deletes */
+    --whatsapp: #22c55e;
+    /* Keep green for WhatsApp recognition */
+}
+
 /* Reset and Base Styles */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 body {
-    /* A soft gray background for the laptop screen */
-    background-color: #f3f4f6;
+    background-color: var(--bg-page);
+    color: var(--text-main);
     display: flex;
     justify-content: center;
-    padding: 40px 20px;
+    padding: 16px;
 }
 
 /* The "Mobile Phone" Container */
 .container {
-    background-color: #ffffff;
+    background-color: var(--bg-panel);
     width: 100%;
-    max-width: 400px;
-    /* Forces iPhone width */
+    max-width: 1100px;
     border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     padding: 24px;
+    border: 1px solid var(--border-color);
 }
 
+.dashboard-grid,
+.management-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+/* Tablet / iPad Landscape Layout */
+@media (min-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 360px 1fr;
+        align-items: start;
+    }
+
+    .management-grid {
+        grid-template-columns: 400px 1fr;
+        gap: 24px;
+        align-items: start;
+    }
+
+    .form-panel {
+        position: sticky;
+        top: 16px;
+        background: var(--bg-card);
+        padding: 20px;
+        border-radius: 14px;
+        border: 1px solid var(--border-color);
+        max-height: calc(100vh - 32px);
+        overflow-y: auto;
+    }
+}
+
+/* Typography & Headings */
 h2 {
-    text-align: center;
-    color: #111827;
-    margin-bottom: 24px;
-    font-size: 1.5rem;
-    font-weight: 600;
+    color: var(--accent-gold);
+    font-size: 1.35rem;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+}
+
+h3 {
+    color: var(--text-main);
 }
 
 /* Form Layout */
 .form-group {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .form-row {
     display: flex;
-    gap: 12px;
+    gap: 10px;
 }
 
 .form-row .form-group {
     flex: 1;
-    /* Splits side-by-side inputs evenly */
 }
 
 label {
     display: block;
-    font-size: 0.875rem;
-    color: #4b5563;
-    margin-bottom: 8px;
-    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    font-weight: 600;
 }
 
 input,
 select {
     width: 100%;
-    padding: 14px;
-    border: 1px solid #d1d5db;
-    border-radius: 10px;
-    font-size: 1rem;
-    color: #111827;
-    background-color: #f9fafb;
-    transition: all 0.2s ease;
-    -webkit-appearance: none;
-    /* Makes dropdowns look like native app buttons */
-    appearance: none;
+    padding: 10px 12px;
+    border: 1.5px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1.1rem;
+    color: var(--text-main);
+    background-color: var(--bg-input);
+    color-scheme: dark;
+    /* Makes date picker icon white */
 }
 
 input:focus,
 select:focus {
     outline: none;
-    border-color: #3b82f6;
-    background-color: #ffffff;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-}
-
-/* Results Card */
-.results {
-    margin-top: 28px;
-    background-color: #eff6ff;
-    /* Light blue tint to highlight totals */
-    padding: 20px;
-    border-radius: 12px;
-    border: 1px solid #bfdbfe;
-}
-
-.results p {
-    font-size: 1rem;
-    color: #334155;
-    margin-bottom: 12px;
-    display: flex;
-    justify-content: space-between;
-}
-
-.results p:last-child {
-    margin-bottom: 0;
-    font-size: 1.15rem;
-    color: #1e3a8a;
-    border-top: 1px solid #93c5fd;
-    padding-top: 12px;
-    margin-top: 4px;
-}
-
-.btn-primary {
-    width: 100%;
-    padding: 14px;
-    background-color: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 10px;
-}
-
-.btn-danger {
-    width: 100%;
-    padding: 14px;
-    background-color: #ef4444;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 20px;
-}
-
-.grand-total {
-    background-color: #fef2f2;
-    border-color: #fca5a5;
-    margin-top: 30px;
-}
-
-.grand-total p:last-child {
-    border-top-color: #f87171;
-    color: #991b1b;
-}
-
-.btn-padam {
-    background-color: transparent;
-    color: #ef4444;
-    border: 1px solid #ef4444;
-    padding: 8px;
-    border-radius: 6px;
-    margin-top: 12px;
-    cursor: pointer;
-    width: 100%;
-    font-weight: 600;
-}
-
-/* Vendor Grouping Styles */
-.vendor-group {
-    margin-top: 24px;
-    background-color: #f8fafc;
-    /* Very light gray/blue */
-    border: 2px solid #cbd5e1;
-    border-radius: 12px;
-    padding: 16px;
-}
-
-.vendor-header {
-    border-bottom: 2px solid #94a3b8;
-    padding-bottom: 12px;
-    margin-bottom: 16px;
-}
-
-.vendor-header h3 {
-    color: #334155;
-    font-size: 1.1rem;
-    margin-bottom: 6px;
-    text-align: left;
-}
-
-.vendor-header p {
-    color: #047857;
-    /* High contrast green for the payout */
-    font-weight: 700;
-    font-size: 1.15rem;
-}
-
-/* Adjusting the item cards to fit inside the vendor box */
-.item-card {
-    margin-top: 12px;
-    padding: 16px;
-    background-color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border-color: var(--accent-gold);
 }
 
 /* Navigation Menu */
 .nav-menu {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     margin-bottom: 20px;
-    border-bottom: 2px solid #e2e8f0;
-    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 12px;
 }
 
 .nav-menu a {
     flex: 1;
     text-align: center;
     text-decoration: none;
-    color: #64748b;
-    font-weight: 600;
-    padding: 8px 0;
-    border-radius: 8px;
+    color: var(--text-muted);
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 10px 0;
+    border-radius: 10px;
+    transition: all 0.2s ease;
 }
 
 .nav-menu a.active {
-    background-color: #3b82f6;
-    color: white;
+    background-color: var(--accent-gold);
+    color: var(--text-dark);
+}
+
+/* Buttons */
+.btn-primary {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--accent-gold);
+    color: var(--text-dark);
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-gold-hover);
+}
+
+.btn-danger {
+    width: 100%;
+    padding: 10px;
+    background-color: transparent;
+    color: var(--danger);
+    border: 1.5px solid var(--danger);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+.btn-padam,
+.btn-del {
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-del {
+    font-size: 1.3rem;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Left Panel Summary (Grand Total) */
+.grand-total {
+    margin-top: 16px;
+    background-color: var(--accent-gold-muted);
+    border: 1.5px solid var(--accent-gold);
+    padding: 14px;
+    border-radius: 10px;
+}
+
+.grand-total p {
+    font-size: 1.05rem;
+    color: var(--text-main);
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.grand-total p b {
+    font-size: 1.25rem;
+    color: var(--accent-gold);
+}
+
+/* Right Panel: Compact Vendor Cards */
+.vendor-group {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.vendor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-bottom: 8px;
+}
+
+.vendor-payout-text {
+    font-size: 1.15rem;
+    color: var(--text-muted);
+}
+
+.vendor-payout-text b {
+    font-size: 1.35rem;
+    color: var(--accent-gold);
+}
+
+/* Compact Item Rows */
+.item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: var(--bg-input);
+    border-radius: 8px;
+    margin-top: 6px;
+}
+
+.item-main {
+    display: flex;
+    flex-direction: column;
+}
+
+.item-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--accent-gold);
+}
+
+.item-stats {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+}
+
+.item-stats b {
+    color: var(--text-main);
+}
+
+.item-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.item-amount {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+/* Auto-Calculate Mode Toggle */
+.toggle-container {
+    display: flex;
+    background: var(--bg-input);
+    border-radius: 8px;
+    padding: 3px;
+    gap: 2px;
+}
+
+.toggle-btn {
+    background: transparent;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.toggle-btn.active {
+    background: var(--accent-gold);
+    color: var(--text-dark);
 }
 
 /* WhatsApp Button */
-.btn-whatsapp {
-    width: 100%;
-    padding: 12px;
-    background-color: #25D366;
-    color: white;
+.btn-whatsapp-compact {
+    background-color: var(--whatsapp);
+    color: #000;
     border: none;
+    padding: 10px 16px;
     border-radius: 8px;
-    font-size: 0.95rem;
-    font-weight: 600;
+    font-size: 1rem;
+    font-weight: 700;
     cursor: pointer;
-    margin-top: 12px;
-    box-shadow: 0 2px 4px rgba(37, 211, 102, 0.2);
-}
-
-.btn-whatsapp:active {
-    background-color: #1ea952;
 }

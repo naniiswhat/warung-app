@@ -63,3 +63,33 @@ function archiveDailyData(tarikh, dailyData) {
 
     saveHistory(history);
 }
+
+// --- BACKUP & IMPORT TOOLS ---
+function exportSemuaData() {
+    const backup = {
+        katalog: getKatalog(),
+        warungData: getJualan(),
+        warungHistory: getHistory(),
+        tarikhBackup: new Date().toISOString()
+    };
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `backup_warung_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function importSemuaData(jsonString) {
+    try {
+        const parsed = JSON.parse(jsonString);
+        if (parsed.katalog) saveKatalog(parsed.katalog);
+        if (parsed.warungData) saveJualan(parsed.warungData);
+        if (parsed.warungHistory) saveHistory(parsed.warungHistory);
+        alert("Data berjaya dipulihkan!");
+        location.reload();
+    } catch (err) {
+        alert("Fail backup tidak sah.");
+    }
+}

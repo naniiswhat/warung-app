@@ -7,7 +7,12 @@ const foodNameInput = document.getElementById('foodName');
 const hargaVendorInput = document.getElementById('hargaVendor');
 const hargaJualInput = document.getElementById('hargaJual');
 const qtyHantarInput = document.getElementById('qtyHantar');
-const qtyLakuInput = document.getElementById('qtyLaku');
+const qtyInputDinamik = document.getElementById('qtyInputDinamik');
+const labelKuantitiDinamik = document.getElementById('labelKuantitiDinamik');
+const btnModeLaku = document.getElementById('btnModeLaku');
+const btnModeBaki = document.getElementById('btnModeBaki');
+
+let kemasukanMode = 'laku'; // Default mode
 
 function initDropdowns() {
     const katalog = getKatalog(); // Pull from LS
@@ -51,14 +56,49 @@ function autofillPrices() {
 vendorNameInput.addEventListener('change', updateFoodDropdown);
 foodNameInput.addEventListener('change', autofillPrices);
 
+// --- AUTO-CALCULATE TOGGLE LOGIC ---
+btnModeLaku.addEventListener('click', () => {
+    kemasukanMode = 'laku';
+    btnModeLaku.classList.add('active');
+    btnModeBaki.classList.remove('active');
+    labelKuantitiDinamik.innerText = 'Laku (Terjual)';
+    qtyInputDinamik.value = '0';
+});
+
+btnModeBaki.addEventListener('click', () => {
+    kemasukanMode = 'baki';
+    btnModeBaki.classList.add('active');
+    btnModeLaku.classList.remove('active');
+    labelKuantitiDinamik.innerText = 'Baki (Sisa)';
+    qtyInputDinamik.value = '0';
+});
+
 function tambahRekod() {
     // 1. Calculate Math
     const hargaV = parseFloat(hargaVendorInput.value) || 0;
     const hargaJ = parseFloat(hargaJualInput.value) || 0;
     const hantar = parseInt(qtyHantarInput.value) || 0;
-    const laku = parseInt(qtyLakuInput.value) || 0;
 
-    const baki = hantar - laku;
+    // The user's input could be the "Laku" OR the "Baki" depending on the toggle
+    const inputDinamik = parseInt(qtyInputDinamik.value) || 0;
+
+    let laku = 0;
+    let baki = 0;
+
+    if (kemasukanMode === 'laku') {
+        laku = inputDinamik;
+        baki = hantar - laku;
+    } else if (kemasukanMode === 'baki') {
+        baki = inputDinamik;
+        laku = hantar - baki;
+    }
+
+    // Failsafe to prevent negative leftovers
+    if (baki < 0) {
+        alert("Ralat: Jumlah laku tidak boleh melebihi kuantiti hantar.");
+        return;
+    }
+
     const payout = laku * hargaV;
     const untung = laku * (hargaJ - hargaV);
 
@@ -82,67 +122,65 @@ function tambahRekod() {
 
 function renderPaparan() {
     const container = document.getElementById('senaraiContainer');
-    container.innerHTML = ''; // Clear current view
+    container.innerHTML = '';
 
     let jumlahPayout = 0;
     let jumlahUntung = 0;
-
-    // 1. Organize data into Vendor Groups
     const groupedData = {};
 
     senaraiJualan.forEach((item, index) => {
         jumlahPayout += item.payout;
         jumlahUntung += item.untung;
 
-        // If this vendor doesn't exist in our group yet, create them
         if (!groupedData[item.vendor]) {
-            groupedData[item.vendor] = {
-                vendorTotal: 0,
-                items: []
-            };
+            groupedData[item.vendor] = { vendorTotal: 0, items: [] };
         }
-
-        // Add this item's payout to the vendor's subtotal
         groupedData[item.vendor].vendorTotal += item.payout;
-        // Save the item along with its original array index for the Padam button
         groupedData[item.vendor].items.push({ ...item, originalIndex: index });
     });
 
-    // 2. Render the Groups to the screen
+    if (Object.keys(groupedData).length === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted); font-size: 1.1rem; padding: 20px 0; text-align: center;">Belum ada jualan direkodkan hari ini.</p>';
+    }
+
     for (const vendorName in groupedData) {
         const vendorData = groupedData[vendorName];
-
-        // Create the Vendor Container
         const vendorGroupDiv = document.createElement('div');
         vendorGroupDiv.className = 'vendor-group';
+
+        // Header with inline WhatsApp button & large total
         vendorGroupDiv.innerHTML = `
             <div class="vendor-header">
-                <h3>Vendor: ${vendorName || "Tidak Dinamakan"}</h3>
-                <p>Bayar Vendor: RM ${vendorData.vendorTotal.toFixed(2)}</p>
-                <!-- ADD THE WHATSAPP BUTTON HERE -->
-                <button onclick="hantarWhatsApp('${vendorName}')" class="btn-whatsapp">Hantar Resit WhatsApp</button>
+                <div>
+                    <h3>${vendorName || "Tidak Dinamakan"}</h3>
+                    <span class="vendor-payout-text">Bayar: <b>RM ${vendorData.vendorTotal.toFixed(2)}</b></span>
+                </div>
+                <button onclick="hantarWhatsApp('${vendorName}')" class="btn-whatsapp-compact">
+                    Hantar WhatsApp
+                </button>
             </div>
         `;
 
-        // Loop through this specific vendor's foods and create their cards
+        // Compact horizontal row per item
         vendorData.items.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'results item-card';
-            card.innerHTML = `
-                <p><strong>${item.makanan}</strong></p>
-                <p>Baki Pulangkan: <span>${item.baki}</span></p>
-                <p>Bayaran: RM <span>${item.payout.toFixed(2)}</span></p>
-                <p>Untung: RM <span>${item.untung.toFixed(2)}</span></p>
-                <button onclick="padamItem(${item.originalIndex})" class="btn-padam">Padam</button>
+            const row = document.createElement('div');
+            row.className = 'item-row';
+            row.innerHTML = `
+                <div class="item-main">
+                    <span class="item-name">${item.makanan}</span>
+                    <span class="item-stats">Jual: <b>${item.laku || 0}</b> | Baki: <b>${item.baki}</b></span>
+                </div>
+                <div class="item-right">
+                    <span class="item-amount">RM ${item.payout.toFixed(2)}</span>
+                    <button onclick="padamItem(${item.originalIndex})" class="btn-del" title="Padam">&times;</button>
+                </div>
             `;
-            vendorGroupDiv.appendChild(card);
+            vendorGroupDiv.appendChild(row);
         });
 
-        // Add the whole vendor block to the main screen
         container.appendChild(vendorGroupDiv);
     }
 
-    // Update Grand Totals at the very bottom
     document.getElementById('grandPayout').innerText = jumlahPayout.toFixed(2);
     document.getElementById('grandUntung').innerText = jumlahUntung.toFixed(2);
 }

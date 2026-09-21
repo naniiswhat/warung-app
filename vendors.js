@@ -7,7 +7,7 @@ function renderKatalog() {
     const selectVendor = document.getElementById('selectVendorForFood');
 
     // Clear current views
-    container.innerHTML = '<h3 style="margin-bottom: 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">Senarai Katalog Semasa</h3>';
+    container.innerHTML = '<h2 style="text-align: left; margin-bottom: 12px;">Senarai Katalog Semasa</h2>';
     selectVendor.innerHTML = '<option value="">-- Sila Pilih Vendor --</option>';
 
     // Loop through the catalog dictionary
@@ -25,21 +25,24 @@ function renderKatalog() {
 
         let itemsHtml = '';
 
-        // Build individual food cards inside this vendor
+        // Build compact horizontal row per item (matches dashboard style)
         katalog[vendorName].forEach((food, index) => {
             itemsHtml += `
-                <div class="item-card" style="padding: 12px; margin-top: 10px;">
-                    <p style="margin-bottom: 4px;"><strong>${food.nama}</strong></p>
-                    <p style="font-size: 0.9rem; margin-bottom: 8px;">Modal: RM ${food.hargaV.toFixed(2)} | Jual: RM ${food.hargaJ.toFixed(2)}</p>
-                    <button onclick="padamMakanan('${vendorName}', ${index})" class="btn-padam" style="padding: 6px; font-size: 0.85rem; margin-top: 0;">Buang Makanan</button>
+                <div class="item-row">
+                    <div class="item-main">
+                        <span class="item-name">${food.nama}</span>
+                        <span class="item-stats">Modal: <b>RM ${food.hargaV.toFixed(2)}</b> | Jual: <b>RM ${food.hargaJ.toFixed(2)}</b></span>
+                    </div>
+                    <button onclick="padamMakanan('${vendorName}', ${index})" class="btn-del" title="Buang Makanan">&times;</button>
                 </div>
             `;
         });
 
+        // Vendor Header with Delete Button
         vendorDiv.innerHTML = `
             <div class="vendor-header" style="display: flex; justify-content: space-between; align-items: center;">
                 <h3 style="margin:0;">${vendorName}</h3>
-                <button onclick="padamVendor('${vendorName}')" style="background: none; border: none; color: #ef4444; font-size: 1.5rem; cursor: pointer; padding: 0 8px;">&times;</button>
+                <button onclick="padamVendor('${vendorName}')" style="background: none; border: none; color: #ef4444; font-size: 1.5rem; cursor: pointer; padding: 0 8px;" title="Padam Vendor">&times;</button>
             </div>
             ${itemsHtml}
         `;
@@ -98,6 +101,25 @@ window.padamVendor = function (vendorName) {
         renderKatalog();
     }
 };
+
+// --- BACKUP / IMPORT LISTENER ---
+document.getElementById('btnImport').addEventListener('click', () => {
+    const fileInput = document.getElementById('importFile');
+    if (fileInput.files.length === 0) {
+        alert("Sila pilih fail backup (.json) terlebih dahulu.");
+        return;
+    }
+
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+        const contents = e.target.result;
+        importSemuaData(contents); // This calls the function in database.js
+    };
+
+    reader.readAsText(file);
+});
 
 // --- INITIALIZE ---
 renderKatalog();

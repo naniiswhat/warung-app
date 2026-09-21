@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="icon.png">
 </head>
 
@@ -20,53 +20,78 @@
             <a href="sejarah.html">Sejarah</a>
         </nav>
 
-        <h2>Rekod Jualan Harian</h2>
+        <div class="dashboard-grid">
+            <div class="form-panel">
+                <h2>Kemasukan Jualan</h2>
 
-        <div class="form-group">
-            <label>Nama Vendor</label>
-            <select id="vendorName"></select>
-        </div>
+                <div class="form-group">
+                    <label>Nama Vendor</label>
+                    <select id="vendorName"></select>
+                </div>
 
-        <div class="form-group">
-            <label>Nama Makanan (Contoh: Nasi Lemak)</label>
-            <select id="foodName"></select>
-        </div>
+                <div class="form-group">
+                    <label>Nama Makanan</label>
+                    <select id="foodName"></select>
+                </div>
 
-        <div class="form-row">
-            <div class="form-group">
-                <label>Harga Vendor (RM)</label>
-                <input type="number" id="hargaVendor" value="1.00" step="0.10">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Harga Vendor (RM)</label>
+                        <input type="number" id="hargaVendor" value="1.00" step="0.10">
+                    </div>
+                    <div class="form-group">
+                        <label>Harga Jual (RM)</label>
+                        <input type="number" id="hargaJual" value="1.50" step="0.10">
+                    </div>
+                </div>
+
+                <!-- Cleaned Toggle Box -->
+                <div class="form-group"
+                    style="padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); margin-bottom: 16px; background: var(--bg-card);">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <label style="margin: 0; color: var(--accent-gold); font-size: 1.05rem;">Mod Kemasukan:</label>
+                        <div class="toggle-container">
+                            <button id="btnModeLaku" class="toggle-btn active">Masuk Laku</button>
+                            <button id="btnModeBaki" class="toggle-btn">Masuk Baki</button>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Hantar (Total)</label>
+                            <input type="number" id="qtyHantar" value="20">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label id="labelKuantitiDinamik">Laku (Terjual)</label>
+                            <input type="number" id="qtyInputDinamik" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <button id="btnTambah" class="btn-primary">Tambah ke Senarai</button>
+
+                <div class="results grand-total">
+                    <p>Jumlah Vendor: <span>RM <b id="grandPayout">0.00</b></span></p>
+                    <p>Untung Bersih: <span>RM <b id="grandUntung">0.00</b></span></p>
+                    <button id="btnTutup" class="btn-danger">Tutup Kedai</button>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Harga Jual (RM)</label>
-                <input type="number" id="hargaJual" value="1.50" step="0.10">
+
+            <div class="feed-panel">
+                <h2 style="text-align: left; margin-bottom: 12px;">Senarai Jualan Hari Ini</h2>
+                <div id="senaraiContainer"></div>
             </div>
-        </div>
-
-        <div class="form-row">
-            <div class="form-group">
-                <label>Kuantiti Hantar</label>
-                <input type="number" id="qtyHantar" value="20">
-            </div>
-            <div class="form-group">
-                <label>Kuantiti Laku</label>
-                <input type="number" id="qtyLaku" value="0">
-            </div>
-        </div>
-
-        <button id="btnTambah" class="btn-primary">Tambah ke Senarai</button>
-
-        <div id="senaraiContainer"></div>
-
-        <div class="results grand-total">
-            <p>Jumlah Keseluruhan Vendor: RM <span id="grandPayout">0.00</span></p>
-            <p><strong>Jumlah Untung Bersih: RM <span id="grandUntung">0.00</span></strong></p>
-            <button id="btnTutup" class="btn-danger">Tutup Kedai (Padam Semua)</button>
         </div>
     </div>
 
     <script src="database.js"></script>
     <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); });
+        }
+    </script>
 </body>
 
 </html>

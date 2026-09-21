@@ -8,61 +8,74 @@
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="icon.png">
 </head>
 
 <body>
     <div class="container">
-        <!-- Shared Navigation Menu -->
         <nav class="nav-menu">
             <a href="index.html">Dashboard Harian</a>
             <a href="vendors.html" class="active">Urus Vendor</a>
-            <a href="sejarah.html">Sejarah</a>
+            <a href="sejarah.html">Sejarah & Laporan</a>
         </nav>
 
-        <h2>Urus Vendor & Katalog</h2>
+        <div class="management-grid">
+            <div class="form-panel">
+                <h2>Urus Vendor & Katalog</h2>
 
-        <!-- Section 1: Add New Vendor -->
-        <div class="results" style="margin-bottom: 24px;">
-            <h3 style="margin-bottom: 12px; color: #1e3a8a;">1. Tambah Vendor Baru</h3>
-            <div class="form-group">
-                <input type="text" id="newVendorName" placeholder="Nama Vendor (Contoh: Makcik Kiah)">
-            </div>
-            <button id="btnAddVendor" class="btn-primary" style="background-color: #10b981;">+ Tambah Vendor</button>
-        </div>
-
-        <!-- Section 2: Add Food to a Vendor -->
-        <div class="results" style="margin-bottom: 32px;">
-            <h3 style="margin-bottom: 12px; color: #1e3a8a;">2. Tambah Makanan</h3>
-            <div class="form-group">
-                <label>Pilih Vendor</label>
-                <select id="selectVendorForFood"></select>
-            </div>
-            <div class="form-group">
-                <label>Nama Makanan</label>
-                <input type="text" id="newFoodName" placeholder="Contoh: Karipap Kentang">
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Harga Vendor (RM)</label>
-                    <input type="number" id="newHargaV" value="1.00" step="0.10">
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label style="color: var(--accent-gold); font-size: 1.1rem;">1. Tambah Vendor Baru</label>
+                    <input type="text" id="newVendorName" placeholder="Nama (Cth: Makcik Kiah)">
+                    <button id="btnAddVendor" class="btn-primary">+ Tambah Vendor</button>
                 </div>
+
+                <hr style="border: 1px solid var(--border-color); margin-bottom: 20px;">
+
                 <div class="form-group">
-                    <label>Harga Jual (RM)</label>
-                    <input type="number" id="newHargaJ" value="1.50" step="0.10">
+                    <label style="color: var(--accent-gold); font-size: 1.1rem;">2. Tambah Makanan</label>
+                    <select id="selectVendorForFood" style="margin-bottom: 12px;"></select>
+                    <input type="text" id="newFoodName" placeholder="Nama Makanan" style="margin-bottom: 12px;">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Modal (RM)</label>
+                            <input type="number" id="newHargaV" value="1.00" step="0.10">
+                        </div>
+                        <div class="form-group">
+                            <label>Jual (RM)</label>
+                            <input type="number" id="newHargaJ" value="1.50" step="0.10">
+                        </div>
+                    </div>
+                    <button id="btnAddFood" class="btn-primary">+ Tambah Makanan</button>
+                </div>
+
+                <hr style="border: 1px solid var(--border-color); margin: 20px 0;">
+
+                <div>
+                    <label style="color: var(--accent-gold); font-size: 1.1rem;">3. Backup Data Sistem</label>
+                    <button onclick="exportSemuaData()" class="btn-primary" style="margin-bottom: 8px;">📥 Muat Turun
+                        Backup (Export)</button>
+                    <input type="file" id="importFile" accept=".json" style="padding: 8px; font-size: 0.9rem;">
+                    <button id="btnImport" class="btn-primary"
+                        style="margin-top: 8px; background-color: transparent; border: 1.5px solid var(--accent-gold); color: var(--accent-gold);">📤
+                        Masukkan Backup (Import)</button>
                 </div>
             </div>
-            <button id="btnAddFood" class="btn-primary">+ Tambah Makanan</button>
-        </div>
 
-        <!-- Section 3: The Catalog Viewer -->
-        <div id="katalogContainer"></div>
+            <div class="feed-panel">
+                <div id="katalogContainer"></div>
+            </div>
+        </div>
     </div>
 
-    <!-- Load Database First, then Vendors Logic -->
     <script src="database.js"></script>
     <script src="vendors.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); });
+        }
+    </script>
 </body>
 
 </html>

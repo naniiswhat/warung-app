@@ -4,8 +4,8 @@
     "description": "Sistem pengurusan vendor tumpang",
     "start_url": "index.html",
     "display": "standalone",
-    "background_color": "#f3f4f6",
-    "theme_color": "#3b82f6",
+    "background_color": "#1e1915",
+    "theme_color": "#d4af37",
     "icons": [
         {
             "src": "icon.png",
