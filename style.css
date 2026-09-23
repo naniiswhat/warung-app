@@ -353,3 +353,83 @@ select:focus {
     font-weight: 700;
     cursor: pointer;
 }
+
+/* Phase 2.3: Active Session UI */
+.baki-input-box {
+    width: 70px;
+    padding: 8px;
+    text-align: center;
+    border: 1.5px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--bg-page);
+    color: var(--text-main);
+    font-size: 1.1rem;
+}
+
+.baki-input-box:focus {
+    border-color: var(--accent-gold);
+    outline: none;
+}
+
+.btn-sahkan {
+    background: var(--accent-gold);
+    color: var(--text-dark);
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.btn-sahkan:hover {
+    background: var(--accent-gold-hover);
+}
+
+.btn-undo {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    margin-top: 4px;
+}
+
+/* =========================================
+   PAGE TRANSITION ANIMATIONS
+   ========================================= */
+
+/* 1. Native Cross-Document View Transitions */
+@view-transition {
+    navigation: auto;
+}
+
+/* 2. Fallback Smooth Load Animation */
+@keyframes smoothLoad {
+    0% {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dashboard-grid,
+.management-grid {
+    animation: smoothLoad 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
+
+/* Optional: Make the Nav Menu buttons feel more responsive to touch */
+.nav-menu a {
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+.nav-menu a:active {
+    transform: scale(0.96);
+}

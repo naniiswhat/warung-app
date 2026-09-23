@@ -7,6 +7,7 @@
     <title>Sistem Warung</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
+    <meta name="view-transition" content="same-origin">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="icon.png">
@@ -17,69 +18,56 @@
         <nav class="nav-menu">
             <a href="index.html" class="active">Dashboard Harian</a>
             <a href="vendors.html">Urus Vendor</a>
-            <a href="sejarah.html">Sejarah</a>
+            <a href="sejarah.html">Sejarah & Laporan</a>
         </nav>
 
         <div class="dashboard-grid">
+            <!-- Left Side: Workflow Form -->
             <div class="form-panel">
-                <h2>Kemasukan Jualan</h2>
+                <h2 style="font-size: 1.1rem; color: var(--text-muted); border-bottom: none; margin-bottom: 4px;">
+                    LANGKAH 1</h2>
+                <h2 style="margin-top: 0; padding-top: 0;">Sesi Pagi (Terima Barang)</h2>
 
                 <div class="form-group">
                     <label>Nama Vendor</label>
                     <select id="vendorName"></select>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" style="margin-bottom: 20px;">
                     <label>Nama Makanan</label>
-                    <select id="foodName"></select>
+                    <select id="foodName" style="margin-bottom: 6px;"></select>
+                    <p id="pricePreview" style="font-size: 0.85rem; color: var(--accent-gold);"></p>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Harga Vendor (RM)</label>
-                        <input type="number" id="hargaVendor" value="1.00" step="0.10">
+                        <label>Kuantiti Dihantar</label>
+                        <input type="number" id="qtyHantar" value="20" min="1">
                     </div>
-                    <div class="form-group">
-                        <label>Harga Jual (RM)</label>
-                        <input type="number" id="hargaJual" value="1.50" step="0.10">
-                    </div>
-                </div>
-
-                <!-- Cleaned Toggle Box -->
-                <div class="form-group"
-                    style="padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); margin-bottom: 16px; background: var(--bg-card);">
-                    <div
-                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <label style="margin: 0; color: var(--accent-gold); font-size: 1.05rem;">Mod Kemasukan:</label>
-                        <div class="toggle-container">
-                            <button id="btnModeLaku" class="toggle-btn active">Masuk Laku</button>
-                            <button id="btnModeBaki" class="toggle-btn">Masuk Baki</button>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label>Hantar (Total)</label>
-                            <input type="number" id="qtyHantar" value="20">
-                        </div>
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label id="labelKuantitiDinamik">Laku (Terjual)</label>
-                            <input type="number" id="qtyInputDinamik" value="0">
-                        </div>
+                    <div class="form-group" style="display: flex; align-items: flex-end;">
+                        <button id="btnTambahPagi" class="btn-primary" style="margin-bottom: 2px;">+ Masuk Sesi</button>
                     </div>
                 </div>
 
-                <button id="btnTambah" class="btn-primary">Tambah ke Senarai</button>
+                <hr style="border: 1px solid var(--border-color); margin: 28px 0;">
+
+                <h2 style="font-size: 1.1rem; color: var(--text-muted); border-bottom: none; margin-bottom: 4px;">
+                    LANGKAH 2</h2>
+                <h2 style="margin-top: 0; padding-top: 0;">Sesi Petang (Tutup)</h2>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 12px;">Sahkan baki di panel kanan
+                    untuk melengkapkan pengiraan.</p>
 
                 <div class="results grand-total">
-                    <p>Jumlah Vendor: <span>RM <b id="grandPayout">0.00</b></span></p>
+                    <p>Jumlah Payout: <span>RM <b id="grandPayout">0.00</b></span></p>
                     <p>Untung Bersih: <span>RM <b id="grandUntung">0.00</b></span></p>
-                    <button id="btnTutup" class="btn-danger">Tutup Kedai</button>
+                    <button id="btnTutup" class="btn-danger" style="margin-top: 16px;">Tutup Kedai & Simpan
+                        Sejarah</button>
                 </div>
             </div>
 
+            <!-- Right Side: Active Session Feed -->
             <div class="feed-panel">
-                <h2 style="text-align: left; margin-bottom: 12px;">Senarai Jualan Hari Ini</h2>
+                <h2 style="text-align: left; margin-bottom: 12px;">Senarai Sesi Semasa</h2>
                 <div id="senaraiContainer"></div>
             </div>
         </div>

@@ -7,6 +7,7 @@
     <title>Sistem Warung - Urus Vendor</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
+    <meta name="view-transition" content="same-origin">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="icon.png">
@@ -37,14 +38,23 @@
                     <select id="selectVendorForFood" style="margin-bottom: 12px;"></select>
                     <input type="text" id="newFoodName" placeholder="Nama Makanan" style="margin-bottom: 12px;">
 
+                    <!-- NEW: Pricing Mode Toggle -->
+                    <div
+                        style="display: flex; gap: 4px; margin-bottom: 12px; background: var(--bg-input); padding: 4px; border-radius: 8px; width: max-content;">
+                        <button id="btnJenisTetap" class="toggle-btn active" style="padding: 6px 16px;">RM
+                            Tetap</button>
+                        <button id="btnJenisPeratus" class="toggle-btn" style="padding: 6px 16px;">Peratus (%)</button>
+                    </div>
+
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Modal (RM)</label>
-                            <input type="number" id="newHargaV" value="1.00" step="0.10">
+                            <label>Jual (RM)</label>
+                            <input type="number" id="newHargaJ" value="1.00" step="0.10">
                         </div>
                         <div class="form-group">
-                            <label>Jual (RM)</label>
-                            <input type="number" id="newHargaJ" value="1.50" step="0.10">
+                            <!-- This label will change based on the toggle -->
+                            <label id="labelHargaV">Modal Vendor (RM)</label>
+                            <input type="number" id="newHargaV" value="0.70" step="0.10">
                         </div>
                     </div>
                     <button id="btnAddFood" class="btn-primary">+ Tambah Makanan</button>
@@ -63,7 +73,16 @@
                 </div>
             </div>
 
+            <!-- RIGHT PANEL: Live Catalog with Sorting -->
             <div class="feed-panel">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                    <h2 style="margin-bottom: 0; border: none;">Senarai Katalog</h2>
+                    <select id="sortKatalog" style="width: auto; padding: 6px 12px; font-size: 0.95rem;">
+                        <option value="az">Susun: A - Z</option>
+                        <option value="za">Susun: Z - A</option>
+                    </select>
+                </div>
                 <div id="katalogContainer"></div>
             </div>
         </div>

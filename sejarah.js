@@ -30,57 +30,88 @@ function renderLaporan() {
     const akhir = tarikhAkhirInput.value;
 
     if (!mula || !akhir) {
-        container.innerHTML = '<p style="text-align:center; color:#64748b; font-size: 1.1rem;">Sila pilih tarikh mula dan akhir.</p>';
+        container.innerHTML = '<p style="text-align:center; color: var(--text-muted); font-size: 1.1rem;">Sila pilih tarikh mula dan akhir.</p>';
         return;
     }
 
     const { combinedItems, totalDays } = ambilDataJulat(mula, akhir);
 
     if (combinedItems.length === 0) {
-        container.innerHTML = `<p style="text-align:center; color:#64748b; font-size: 1.1rem; padding: 20px 0;">Tiada rekod jualan antara <b>${mula}</b> hingga <b>${akhir}</b>.</p>`;
+        container.innerHTML = `<p style="text-align:center; color: var(--text-muted); font-size: 1.1rem; padding: 20px 0;">Tiada rekod jualan antara <b>${mula}</b> hingga <b>${akhir}</b>.</p>`;
         return;
     }
 
     container.innerHTML = '';
     let grandPayout = 0;
     let grandUntung = 0;
+    let grandBelumBayar = 0; // New variable to track outstanding debt
     const grouped = {};
 
-    // Calculate totals
+    // Grouping & Calculating logic with isPaid check
     combinedItems.forEach(item => {
         grandPayout += item.payout;
         grandUntung += item.untung;
 
-        if (!grouped[item.vendor]) {
-            grouped[item.vendor] = { vendorTotal: 0, items: [] };
+        // If it is NOT marked paid, add to outstanding debt
+        if (!item.isPaid) {
+            grandBelumBayar += item.payout;
         }
+
+        if (!grouped[item.vendor]) {
+            // Assume vendor is fully paid until we find an unpaid item
+            grouped[item.vendor] = { vendorTotal: 0, vendorBelumBayar: 0, items: [], allPaid: true };
+        }
+
         grouped[item.vendor].vendorTotal += item.payout;
         grouped[item.vendor].items.push(item);
+
+        if (!item.isPaid) {
+            grouped[item.vendor].vendorBelumBayar += item.payout;
+            grouped[item.vendor].allPaid = false;
+        }
     });
 
-    // 1. Render Summary Header (Uses the Dashboard's grand-total styling)
+    // 1. Render Summary Header
     const rangeHeader = document.createElement('div');
     rangeHeader.className = 'results grand-total';
     rangeHeader.style.marginTop = '0';
     rangeHeader.style.marginBottom = '24px';
     rangeHeader.innerHTML = `
         <h2 style="text-align: left; margin-bottom: 12px; color: var(--accent-gold); border-bottom: none;">Laporan: ${mula} hingga ${akhir}</h2>
-        <p>Bayaran Semua Vendor: <span>RM <b>${grandPayout.toFixed(2)}</b></span></p>
+        <p>Keseluruhan Payout Vendor: <span>RM <b>${grandPayout.toFixed(2)}</b></span></p>
         <p>Untung Bersih Warung: <span>RM <b>${grandUntung.toFixed(2)}</b></span></p>
-        <p style="font-size: 0.95rem; color: var(--text-muted); margin-top: 12px; border-top: none; padding-top: 0;">* Berdasarkan rekod dari ${totalDays} hari jualan.</p>
+        <hr style="border: 1px solid var(--border-color); margin: 12px 0;">
+        <p style="color: #ef4444;">Baki Belum Dibayar: <span>RM <b style="color: #ef4444;">${grandBelumBayar.toFixed(2)}</b></span></p>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 12px; border-top: none; padding-top: 0;">* Berdasarkan rekod dari ${totalDays} hari jualan.</p>
     `;
     container.appendChild(rangeHeader);
 
-    // 2. Render Vendor Data (Uses the Dashboard's item-row styling)
+    // 2. Render Vendor Data
     for (const vendorName in grouped) {
         const vData = grouped[vendorName];
         const vBox = document.createElement('div');
         vBox.className = 'vendor-group';
+
+        // Define button styles based on paid status
+        const paidBtnStyle = vData.allPaid
+            ? 'background: transparent; border: 1.5px solid var(--whatsapp); color: var(--whatsapp);'
+            : 'background: transparent; border: 1.5px solid var(--text-muted); color: var(--text-muted);';
+
+        const paidBtnText = vData.allPaid ? '✓ Telah Dibayar' : 'Tanda Sudah Bayar';
+
         vBox.innerHTML = `
-            <div class="vendor-header">
-                <div>
+            <div class="vendor-header" style="display: flex; flex-direction: column; align-items: stretch; gap: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
                     <h3>${vendorName}</h3>
-                    <span class="vendor-payout-text">Jumlah Payout: <b>RM ${vData.vendorTotal.toFixed(2)}</b></span>
+                    <span class="vendor-payout-text">Total: <b>RM ${vData.vendorTotal.toFixed(2)}</b></span>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="toggleVendorPaid('${vendorName}', '${mula}', '${akhir}')" class="btn-primary" style="margin: 0; font-size: 0.9rem; padding: 8px; ${paidBtnStyle}">
+                        ${paidBtnText}
+                    </button>
+                    <button onclick="hantarWhatsAppSejarah('${vendorName}', '${mula}', '${akhir}')" class="btn-whatsapp-compact" style="flex: 1; text-align: center;">
+                        Hantar Resit
+                    </button>
                 </div>
             </div>
         `;
@@ -88,12 +119,15 @@ function renderLaporan() {
         vData.items.forEach(item => {
             const row = document.createElement('div');
             row.className = 'item-row';
+            // Visually dim paid items
+            if (item.isPaid) row.style.opacity = '0.6';
+
             row.innerHTML = `
                 <div class="item-main">
                     <span class="item-name">${item.makanan}</span>
                     <span class="item-stats">
                         Jual: <b>${item.laku || 0}</b> | Baki: <b>${item.baki}</b> 
-                        <span style="font-size:0.85rem; color:#94a3b8; margin-left:8px;">(${item.tarikhAsal})</span>
+                        <span style="font-size:0.85rem; color:var(--text-muted); margin-left:8px;">(${item.tarikhAsal})</span>
                     </span>
                 </div>
                 <div class="item-right">
@@ -107,6 +141,66 @@ function renderLaporan() {
         container.appendChild(vBox);
     }
 }
+
+// --- NEW FUNCTION: Toggle Paid Status ---
+window.toggleVendorPaid = function (vendorName, mula, akhir) {
+    const history = getHistory();
+    const { combinedItems } = ambilDataJulat(mula, akhir);
+
+    // Check if currently all paid to determine toggle direction
+    const vendorItems = combinedItems.filter(item => item.vendor === vendorName);
+    const currentlyAllPaid = vendorItems.every(item => item.isPaid);
+    const newPaidStatus = !currentlyAllPaid;
+
+    // Update the real history database using the tracked original indexes
+    vendorItems.forEach(item => {
+        history[item.tarikhAsal][item.indexAsal].isPaid = newPaidStatus;
+    });
+
+    saveHistory(history);
+    renderLaporan(); // Refresh the screen
+};
+
+// --- NEW FUNCTION: WhatsApp from History ---
+window.hantarWhatsAppSejarah = function (vendorName, mula, akhir) {
+    const { combinedItems } = ambilDataJulat(mula, akhir);
+    const vendorItems = combinedItems.filter(item => item.vendor === vendorName);
+
+    if (vendorItems.length === 0) return;
+
+    let totalPayout = 0;
+
+    // Formatting the message header
+    let dateHeader = mula === akhir ? mula : `${mula} hingga ${akhir}`;
+    let message = `*Resit Jualan Warung*\nVendor: ${vendorName}\nTarikh: ${dateHeader}\n\n`;
+
+    // Group identical items across multiple days to make the receipt cleaner
+    const receiptItems = {};
+    vendorItems.forEach(item => {
+        totalPayout += item.payout;
+        if (!receiptItems[item.makanan]) {
+            receiptItems[item.makanan] = { laku: 0, baki: 0, payout: 0 };
+        }
+        receiptItems[item.makanan].laku += (item.laku || 0);
+        receiptItems[item.makanan].baki += item.baki;
+        receiptItems[item.makanan].payout += item.payout;
+    });
+
+    // Formatting the items
+    for (const makanan in receiptItems) {
+        const details = receiptItems[makanan];
+        message += `    *${makanan}*\n`;
+        message += `    Jual: ${details.laku} | Baki: ${details.baki}\n`;
+        message += `    Bayaran: RM ${details.payout.toFixed(2)}\n\n`;
+    }
+
+    // Formatting the Grand Total
+    message += `*Jumlah Bayaran: RM ${totalPayout.toFixed(2)}*\n`;
+    message += `Terima kasih!`;
+
+    const waLink = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(waLink, '_blank');
+};
 
 window.padamRekodSejarah = function (tarikh, index) {
     if (confirm(`Padam rekod ini daripada sejarah tarikh ${tarikh}?`)) {
