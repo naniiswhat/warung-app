@@ -44,26 +44,29 @@ function renderLaporan() {
     container.innerHTML = '';
     let grandPayout = 0;
     let grandUntung = 0;
-    let grandBelumBayar = 0; // New variable to track outstanding debt
+    let grandBelumBayar = 0;
     const grouped = {};
 
-    // Grouping & Calculating logic with isPaid check
+    // Grouping & Calculating logic with date nesting
     combinedItems.forEach(item => {
         grandPayout += item.payout;
         grandUntung += item.untung;
 
-        // If it is NOT marked paid, add to outstanding debt
         if (!item.isPaid) {
             grandBelumBayar += item.payout;
         }
 
         if (!grouped[item.vendor]) {
-            // Assume vendor is fully paid until we find an unpaid item
-            grouped[item.vendor] = { vendorTotal: 0, vendorBelumBayar: 0, items: [], allPaid: true };
+            grouped[item.vendor] = { vendorTotal: 0, vendorBelumBayar: 0, itemsByDate: {}, allPaid: true };
         }
 
         grouped[item.vendor].vendorTotal += item.payout;
-        grouped[item.vendor].items.push(item);
+
+        // Group items specifically by their date
+        if (!grouped[item.vendor].itemsByDate[item.tarikhAsal]) {
+            grouped[item.vendor].itemsByDate[item.tarikhAsal] = [];
+        }
+        grouped[item.vendor].itemsByDate[item.tarikhAsal].push(item);
 
         if (!item.isPaid) {
             grouped[item.vendor].vendorBelumBayar += item.payout;
@@ -92,7 +95,6 @@ function renderLaporan() {
         const vBox = document.createElement('div');
         vBox.className = 'vendor-group';
 
-        // Define button styles based on paid status
         const paidBtnStyle = vData.allPaid
             ? 'background: transparent; border: 1.5px solid var(--whatsapp); color: var(--whatsapp);'
             : 'background: transparent; border: 1.5px solid var(--text-muted); color: var(--text-muted);';
@@ -116,52 +118,60 @@ function renderLaporan() {
             </div>
         `;
 
-        vData.items.forEach(item => {
-            const row = document.createElement('div');
-            row.className = 'item-row';
-            // Visually dim paid items
-            if (item.isPaid) row.style.opacity = '0.6';
+        // Render Dates and Items sequentially
+        const sortedDates = Object.keys(vData.itemsByDate).sort();
 
-            row.innerHTML = `
-                <div class="item-main">
-                    <span class="item-name">${item.makanan}</span>
-                    <span class="item-stats">
-                        Jual: <b>${item.laku || 0}</b> | Baki: <b>${item.baki}</b> 
-                        <span style="font-size:0.85rem; color:var(--text-muted); margin-left:8px;">(${item.tarikhAsal})</span>
-                    </span>
-                </div>
-                <div class="item-right">
-                    <span class="item-amount" style="margin-right: 12px;">RM ${item.payout.toFixed(2)}</span>
-                    <button onclick="padamRekodSejarah('${item.tarikhAsal}', ${item.indexAsal})" class="btn-del" title="Padam Rekod Ini">&times;</button>
-                </div>
-            `;
-            vBox.appendChild(row);
+        sortedDates.forEach(date => {
+            const dateSubheader = document.createElement('div');
+            dateSubheader.style.padding = '12px 4px 4px 4px';
+            dateSubheader.style.marginBottom = '8px';
+            dateSubheader.style.borderBottom = '1px solid var(--border-color)';
+            dateSubheader.innerHTML = `<span style="color: var(--accent-gold); font-weight: bold; font-size: 1.05rem;">📅 ${date}</span>`;
+            vBox.appendChild(dateSubheader);
+
+            vData.itemsByDate[date].forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'item-row';
+                if (item.isPaid) row.style.opacity = '0.6';
+
+                row.innerHTML = `
+                    <div class="item-main">
+                        <span class="item-name">${item.makanan}</span>
+                        <span class="item-stats">
+                            Jual: <b>${item.laku || 0}</b> | Baki: <b>${item.baki}</b> 
+                        </span>
+                    </div>
+                    <div class="item-right">
+                        <span class="item-amount" style="margin-right: 12px;">RM ${item.payout.toFixed(2)}</span>
+                        <button onclick="padamRekodSejarah('${item.tarikhAsal}', ${item.indexAsal})" class="btn-del" title="Padam Rekod Ini">&times;</button>
+                    </div>
+                `;
+                vBox.appendChild(row);
+            });
         });
 
         container.appendChild(vBox);
     }
 }
 
-// --- NEW FUNCTION: Toggle Paid Status ---
+// --- FUNCTION: Toggle Paid Status ---
 window.toggleVendorPaid = function (vendorName, mula, akhir) {
     const history = getHistory();
     const { combinedItems } = ambilDataJulat(mula, akhir);
 
-    // Check if currently all paid to determine toggle direction
     const vendorItems = combinedItems.filter(item => item.vendor === vendorName);
     const currentlyAllPaid = vendorItems.every(item => item.isPaid);
     const newPaidStatus = !currentlyAllPaid;
 
-    // Update the real history database using the tracked original indexes
     vendorItems.forEach(item => {
         history[item.tarikhAsal][item.indexAsal].isPaid = newPaidStatus;
     });
 
     saveHistory(history);
-    renderLaporan(); // Refresh the screen
+    renderLaporan();
 };
 
-// --- NEW FUNCTION: WhatsApp from History ---
+// --- FUNCTION: WhatsApp from History (Grouped by Date) ---
 window.hantarWhatsAppSejarah = function (vendorName, mula, akhir) {
     const { combinedItems } = ambilDataJulat(mula, akhir);
     const vendorItems = combinedItems.filter(item => item.vendor === vendorName);
@@ -169,32 +179,31 @@ window.hantarWhatsAppSejarah = function (vendorName, mula, akhir) {
     if (vendorItems.length === 0) return;
 
     let totalPayout = 0;
-
-    // Formatting the message header
     let dateHeader = mula === akhir ? mula : `${mula} hingga ${akhir}`;
-    let message = `*Resit Jualan Warung*\nVendor: ${vendorName}\nTarikh: ${dateHeader}\n\n`;
+    let message = `*Resit Jualan Warung Che'lin*\nVendor: ${vendorName}\nTarikh: ${dateHeader}\n\n`;
 
-    // Group identical items across multiple days to make the receipt cleaner
-    const receiptItems = {};
+    // Group items by date for the receipt
+    const itemsByDate = {};
     vendorItems.forEach(item => {
         totalPayout += item.payout;
-        if (!receiptItems[item.makanan]) {
-            receiptItems[item.makanan] = { laku: 0, baki: 0, payout: 0 };
+        if (!itemsByDate[item.tarikhAsal]) {
+            itemsByDate[item.tarikhAsal] = [];
         }
-        receiptItems[item.makanan].laku += (item.laku || 0);
-        receiptItems[item.makanan].baki += item.baki;
-        receiptItems[item.makanan].payout += item.payout;
+        itemsByDate[item.tarikhAsal].push(item);
     });
 
-    // Formatting the items
-    for (const makanan in receiptItems) {
-        const details = receiptItems[makanan];
-        message += `    *${makanan}*\n`;
-        message += `    Jual: ${details.laku} | Baki: ${details.baki}\n`;
-        message += `    Bayaran: RM ${details.payout.toFixed(2)}\n\n`;
-    }
+    const sortedDates = Object.keys(itemsByDate).sort();
 
-    // Formatting the Grand Total
+    // Format the text output date-by-date
+    sortedDates.forEach(date => {
+        message += `    *${date}*\n`;
+        itemsByDate[date].forEach(item => {
+            message += `    *${item.makanan}*\n`;
+            message += `    Jual: ${item.laku || 0} | Baki: ${item.baki}\n`;
+            message += `    Bayaran: RM ${item.payout.toFixed(2)}\n\n`;
+        });
+    });
+
     message += `*Jumlah Bayaran: RM ${totalPayout.toFixed(2)}*\n`;
     message += `Terima kasih!`;
 
@@ -237,7 +246,7 @@ const manualHargaJ = document.getElementById('manualHargaJ');
 const manualQtyHantar = document.getElementById('manualQtyHantar');
 const manualQtyLaku = document.getElementById('manualQtyLaku');
 
-manualTarikh.value = todayStr; // Default to today
+manualTarikh.value = todayStr;
 
 function initManualDropdowns() {
     const katalog = getKatalog();
@@ -277,11 +286,9 @@ function autofillManualPrices() {
     }
 }
 
-// Event Listeners for Manual Dropdowns
 manualVendorName.addEventListener('change', updateManualFoodDropdown);
 manualFoodName.addEventListener('change', autofillManualPrices);
 
-// Add to History Action
 document.getElementById('btnTambahManual').addEventListener('click', () => {
     const tarikh = manualTarikh.value;
     const vendor = manualVendorName.value;
@@ -306,13 +313,12 @@ document.getElementById('btnTambahManual').addEventListener('click', () => {
         laku: laku,
         baki: baki,
         payout: payout,
-        untung: untung
+        untung: untung,
+        isPaid: false
     };
 
-    // Push directly into the history database for the selected date
     archiveDailyData(tarikh, [rekodBaru]);
 
-    // Auto-update the viewer to show the date she just added data to
     tarikhMulaInput.value = tarikh;
     tarikhAkhirInput.value = tarikh;
     renderLaporan();
@@ -320,5 +326,4 @@ document.getElementById('btnTambahManual').addEventListener('click', () => {
     alert(`Rekod ${makanan} berjaya ditambah ke tarikh ${tarikh}!`);
 });
 
-// Initialize on page load
 initManualDropdowns();
